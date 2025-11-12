@@ -4,6 +4,12 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>MinecraftDotnet.Game.Gen</PackageId>
+        <Title>Minecraft Gen Game</Title>
+        <Description>A gen game mode Minecraft server written as a library.</Description>
+        <PackageProjectUrl>https://github.com/Serble/GenDotnet</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Serble/GenDotnet.git</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
