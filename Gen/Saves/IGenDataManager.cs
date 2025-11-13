@@ -4,5 +4,5 @@ namespace Gen.Saves;
 
 public interface IGenDataManager {
     void SavePlayerData(PlayerEntity player, PlayerSave data);
-    PlayerSave? LoadPlayerData(PlayerEntity player);
+    Task<PlayerSave?> LoadPlayerData(PlayerEntity player);
 }

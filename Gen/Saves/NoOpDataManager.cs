@@ -7,7 +7,7 @@ public class NoOpDataManager : IGenDataManager {
         
     }
 
-    public PlayerSave? LoadPlayerData(PlayerEntity player) {
-        return null;
+    public Task<PlayerSave?> LoadPlayerData(PlayerEntity player) {
+        return Task.FromResult<PlayerSave?>(null);
     }
 }

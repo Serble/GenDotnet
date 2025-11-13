@@ -3,6 +3,7 @@ using ManagedServer;
 using ManagedServer.Entities.Types;
 using ManagedServer.Events;
 using ManagedServer.Features;
+using ManagedServer.Features.Bundles;
 using ManagedServer.Features.Impl;
 using ManagedServer.Inventories;
 using ManagedServer.Worlds;
@@ -21,6 +22,7 @@ public class GenGame {
     public static readonly Tag<string> GenItemTag = new("gen:item");
     private static readonly Tag<string> DimensionIdTag = new("gen:dimension_id");
     private static readonly Tag<(ulong StartTick, GenPortal Portal)> PortalTag = new("gen:portal_data");
+    private static readonly Tag<bool> HasLoadedTag = new("gen:has_loaded");
     
     private readonly ManagedMinecraftServer _server;
     private readonly GenConfig _config;
@@ -28,6 +30,12 @@ public class GenGame {
     private readonly IGenDataManager _dataManager;
     
     public Dictionary<string, World> Worlds { get; } = [];
+    
+    private static FeatureBundle WorldFeatures => new(
+        new TradingFeature(), 
+        new ArmourSlotEnforcementFeature(),
+        new DropItemsOnGroundFeature(),
+        new ItemPickupFeature());
 
     public GenGame(ManagedMinecraftServer server, GenConfig config) {
         _server = server;
@@ -84,7 +92,7 @@ public class GenGame {
             
             World world = _server.CreateWorld(dimension.Map, "gen:" + dimension.Id);
             world.SetTag(DimensionIdTag, dimension.Id);
-            world.AddFeature(new TradingFeature());
+            world.AddFeatures(WorldFeatures);
             Worlds[dimension.Id] = world;
             
             foreach (GenShop shop in dimension.Shops) {
@@ -167,12 +175,17 @@ public class GenGame {
                 }
             });
             
-            world.Events.AddListener<PlayerPlaceBlockEvent>(e => e.Cancelled = true);
+            world.Events.AddListener<PlayerPlaceBlockEvent>(e => {
+                e.Cancelled = true;
+                e.Player.Inventory.SendUpdateTo(e.Player);
+            });
             world.Events.AddListener<PlayerBreakBlockEvent>(ProcessBlockBreak);
             
             world.Events.AddListener<PlayerEnteringWorldEvent>(e => {
-                LoadPlayer(e.Player);
-
+                if (!e.Player.GetTagOrDefault(HasLoadedTag, false)) {
+                    LoadPlayer(e.Player).Wait();
+                }
+                
                 _server.Scheduler.ScheduleTask(1, () => {
                     Respawn(e.Player);
                 });
@@ -252,8 +265,10 @@ public class GenGame {
         player.Teleport(_config.Dimensions.First(d => d.Id == player.World.ThrowIfNull().GetTag(DimensionIdTag)).Spawn);
     }
 
-    public void LoadPlayer(PlayerEntity player) {
-        PlayerSave? save = _dataManager.LoadPlayerData(player);
+    public async Task LoadPlayer(PlayerEntity player) {
+        player.SetTag(HasLoadedTag, true);
+        
+        PlayerSave? save = await _dataManager.LoadPlayerData(player);
         if (save == null) {
             return;
         }

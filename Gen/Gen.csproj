@@ -10,6 +10,7 @@
         <Description>A gen game mode Minecraft server written as a library.</Description>
         <PackageProjectUrl>https://github.com/Serble/GenDotnet</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Serble/GenDotnet.git</RepositoryUrl>
+        <Version>1.0.1</Version>
     </PropertyGroup>
 
     <ItemGroup>

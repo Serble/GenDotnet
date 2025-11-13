@@ -141,5 +141,5 @@ public static class TestConfig {
             PickaxeStone1, PickaxeStone2, PickaxeStone3, PickaxeStone4,
             PickaxeIron1, PickaxeIron2, PickaxeIron3, PickaxeIron4,
             PickaxeDiamond1, PickaxeDiamond2, PickaxeDiamond3, PickaxeDiamond4
-    ], DataManager:new MemoryDataManager());
+    ], DataManager:new DelayedDataManagerWrapper(new MemoryDataManager()));
 }

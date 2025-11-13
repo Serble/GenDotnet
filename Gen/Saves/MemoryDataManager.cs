@@ -9,7 +9,7 @@ public class MemoryDataManager : IGenDataManager {
         Data[player.Uuid] = data;
     }
 
-    public PlayerSave? LoadPlayerData(PlayerEntity player) {
-        return Data.GetValueOrDefault(player.Uuid);
+    public Task<PlayerSave?> LoadPlayerData(PlayerEntity player) {
+        return Task.FromResult(Data.GetValueOrDefault(player.Uuid));
     }
 }
