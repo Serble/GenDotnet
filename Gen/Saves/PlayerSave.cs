@@ -1,3 +1,3 @@
 namespace Gen.Saves;
 
-public record PlayerSave(string?[] Inventory, float Health, float Yaw, float Pitch);
+public record PlayerSave((string, int)?[] Inventory, float Health, float Yaw, float Pitch);

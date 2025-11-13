@@ -274,8 +274,8 @@ public class GenGame {
         }
 
         for (int i = 0; i < player.Inventory.Size; i++) {
-            string? itemId = save.Inventory[i];
-            player.Inventory[i] = itemId == null ? ItemStack.Air : _items[itemId];
+            (string, int)? item = save.Inventory[i];
+            player.Inventory[i] = item == null ? ItemStack.Air : _items[item.Value.Item1].WithCount(item.Value.Item2);
         }
         
         player.Health = save.Health;
@@ -284,13 +284,13 @@ public class GenGame {
     }
     
     public void SavePlayer(PlayerEntity player) {
-        string?[] inventory = new string?[player.Inventory.Size];
+        (string, int)?[] inventory = new (string, int)?[player.Inventory.Size];
         for (int i = 0; i < player.Inventory.Size; i++) {
             ItemStack item = player.Inventory[i];
             if (item.IsAir()) {
                 inventory[i] = null;
             } else {
-                inventory[i] = item.GetTag(GenItemTag);
+                inventory[i] = (item.GetTag(GenItemTag), item.Count);
             }
         }
 
